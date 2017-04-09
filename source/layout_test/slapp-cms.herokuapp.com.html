@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title></title>	
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="./slapp-cms.herokuapp.com_files/master.css" rel="stylesheet">
+        <link href="./slapp-cms.herokuapp.com_files/backend.css" rel="stylesheet">
+        <script>
+
+        /*http://www.staceyapp.com/*/
+            function toggleMenu(){
+                if(document.querySelector('.menu').className ==='menu'){
+                    document.querySelector('.menu').className ='menu closed';
+                } else {
+                    document.querySelector('.menu').className ='menu';
+                }
+            }
+            function cmsPageLoaded(isloggedin){
+                if(isloggedin){
+                    document.getElementById("loginLinkLable").innerText = "Logout";
+                } else {
+                    document.getElementById("loginLinkLable").innerText = "Login";
+                }
+            }
+        </script>
+    </head>
+    <body>
+        <header>
+            <nav>
+                
+                <ul class="menu closed">
+                    <li><a href="http://slapp-cms.herokuapp.com/">
+                    <svg style="background-color:black;width: 2em;height: 2em;" viewBox="0 0 100 100">
+                        <polyline points="50,10 10,50 20,50 20,90 40,90 40,70 60,70 60, 90 80,90 80,50 90,50 50,10" style="fill:none;stroke:white;stroke-width:5"></polyline>
+                    </svg> <br>
+                    Home</a></li><!--
+                    --><li><a href="http://slapp-cms.herokuapp.com/about"><svg style="background-color:black;width: 2em;height: 2em;" viewBox="0 0 100 100">
+						<circle cx="50" cy="20" r="6" stroke="white" stroke-width="5" fill="none"></circle>
+						<polyline points="40,42 56,42 56,80 44,80" style="fill:none;stroke:white;stroke-width:5"></polyline>
+					</svg><br>
+					About</a></li><!--
+                    --><li><a href="http://slapp-cms.herokuapp.com/contact">
+                    <svg width="100" style="background-color:black;width:2em;height:2em" viewBox="10 10 75 75">
+						<circle cx="50" cy="30" r="14.5" stroke="white" stroke-width="3" fill="none"></circle>
+						<circle cx="50" cy="30" r="4" stroke="white" stroke-width="3" fill="none"></circle>
+						<polyline points="36.5,35 50, 65 63.5,35" style="fill:black;stroke:white;stroke-width:3"></polyline>
+					</svg><br>Contact</a></li><!--
+                    --><li><a href="http://slapp-cms.herokuapp.com/?login">
+                    <svg style="background-color:black;width:2em;height:2em" viewBox="0 10 75 75">
+					  <circle cx="20" cy="50" r="15" stroke="white" stroke-width="3" fill="none"></circle>
+					  <circle cx="15" cy="50" r="3" stroke="white" stroke-width="2" fill="none"></circle>
+					  <polyline points="34,45 41,45 44,47 46,45 49,47 52,45 55,48 58,45 60,45 63,47 65, 45 65,45 68.5, 49.5 65, 56 34, 56" style="fill:none;stroke:white;stroke-width:3"></polyline>
+					  <polygon points="32,45.5 37,45.5 37,55.5 32,55.5" style="fill:black;stroke:none;stroke-width:2"></polygon>
+					</svg> <br>
+                    <span id="loginLinkLable">Login</span></a></li>
+                </ul>
+                <a class="button" onclick="toggleMenu()">
+                    <svg width="60" height="60" viewBox="2 3 40 40">
+                        <line x1="12" y1="16.5" x2="32" y2="16.5" style="stroke:rgba(0,0,0,0.3);stroke-width:3"></line>
+                        <line x1="12" y1="22.5" x2="32" y2="22.5" style="stroke:rgba(0,0,0,0.3);stroke-width:3"></line>
+                        <line x1="12" y1="28.5" x2="32" y2="28.5" style="stroke:rgba(0,0,0,0.3);stroke-width:3"></line>
+                    </svg>
+                </a>
+                <img class="logo" src="images/logo.png" / >
+                
+                <br class="clear-float">
+            </nav>
+            <section class="hero">
+                <img>
+                <h1>Slapp<em>CMS</em>, <!-- </h1><br>
+                <h2>--><em>simply Content Management</em>
+                </h1>
+                <p>
+                    If your are creating, updating or publishing your webcontent on a mobile or a desktop device, Slapp<em>CMS</em> will be there for you and give you a hand.
+                </p>
+                <button> Take the Tour </button>
+            </section>
+        </header>
+        <main>
+            <section class="versions">
+                <section class="version">
+                    <h2>Basic FileSystem</h2>
+                    <img class="icon" />
+                    <p>
+                        The most basic setup without any dependencies. Perfect for mircosites, static sites and raspberry Pi webservers Solutions.
+                        <br><br>
+                        <a href="#">Check it out</a>
+                    </p>
+                </section>
+                <section class="version">
+                    <h2>PostgreSql</h2>
+                    <img class="icon" />
+                    <p>
+                        Minor postgreSql dependency, works well on clustered and distributed hosting solutions. Even on free tier on heroku, with the right addins.
+                        <br><br>
+                        <a href="#">Check it out</a>
+                    </p>
+                </section>
+            </section>
+            <section class="features">
+                <h2>Base Features</h2>
+                <section class="feature">
+                    <img src="images/customizable.png"/>
+                    <h3>Customizable</h3>
+                </section>
+                <section class="feature">
+                    <img src="images/mobile.png"/>
+                    <h3>Mobile Friendly</h3>
+                </section>
+                <section class="feature">
+                    <img src="images/forms.png"/>
+                    <h3>Forms Engine</h3>
+                </section>
+                <br class="clear-float" />
+            </section>
+            <div class="seperator"></div>
+            <section class="case-studies">
+                <h2>Case Studies</h2>
+                <ul>
+                    <li><a class="current" href="#"></a></li>
+                    <li><a href="#"></a></li>
+                    <li><a href="#"></a></li>
+                    <li><a href="#"></a></li>
+                </ul>
+                <section class="case-study">
+                    <img class="teaser" />
+                    <h3>CaseStudy MicroSite</h2>
+                    <p>
+                        Learn all about how, this MicroSite was setup and launched in under 4 hours, with Slapp<em>CMS</em>!    
+                        <br><br>
+                        <a href="#">Check it out</a>
+                    </p>
+                </section>
+                <section class="case-study hidden">
+                    <img class="teaser" />
+                    <h3>CaseStudy WebApp</h2>
+                    <p>
+                        The most basic setup without any dependencies. Perfect for mircosites, static sites and raspberry Pi webservers Solutions.
+                        <br><br>
+                        <a href="#">Check it out</a>
+                    </p>
+                </section>
+                <section class="case-study hidden">
+                    <img class="teaser" />
+                    <h3>CaseStudy Alexa Skill</h2>
+                    <p>
+                        The most basic setup without any dependencies. Perfect for mircosites, static sites and raspberry Pi webservers Solutions.
+                        <br><br>
+                        <a href="#">Check it out</a>
+                    </p>
+                </section>
+                <section class="case-study hidden">
+                    <img class="teaser" />
+                    <h3>CaseStudy Image Gallery</h2>
+                    <p>
+                        The most basic setup without any dependencies. Perfect for mircosites, static sites and raspberry Pi webservers Solutions.
+                        <br><br>
+                        <a href="#">Check it out</a>
+                    </p>
+                </section>
+                <br class="clear-float" />
+            </section>
+        </main>
+        <footer>
+            <ul>
+                <li><a href="#">Home</a></li><!--
+                --><li><a href="#">Blog</a></li><!--
+                --><li><a href="#">FAQ's</a></li><!--
+                --><li><a href="#">Terms of use</a></li>                
+            </ul> 
+            <br class="clear-float" />
+            <div class="social-media"><img src="images/social_v2.png"/></div>
+            <div class="software-status">
+                <ul>
+                    <li><img src="images/users.png" /><span>Users<br/>1</span></li>
+                    <li><img src="images/issues.png" /><span>Issues<br />0</span></li>
+                    <li><img src="images/version.png" /><span>Version<br/>1.0.0</span></li>
+                </ul>
+                <br class="clear-float" />
+            </div>
+        </footer>
+    <script>
+    if(typeof(cmsPageLoaded)==="function"){
+        cmsPageLoaded(false);
+    }
+</script>
+</body>
+</html>

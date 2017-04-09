@@ -1,0 +1,257 @@
+html {
+    padding: 0;
+    margin: 0;
+}
+
+body {
+    font-size: 1em;
+    font-family: Arial, Helvetica, sans-serif;
+    padding: 0;
+    margin: 0;
+}
+
+header section {
+    padding: 30px 20px 20px 20px;
+    line-height: 1.5;
+}
+
+header section.hero {
+    background: url(background.png) no-repeat;
+    padding-top: 300px;
+}
+
+header section img {
+    width: 90%;
+    height: 220px;
+}
+
+header section h1 {
+    width: 95%;
+    margin: 0;
+    font-size: 1.6em;
+    font-weight: normal;
+}
+
+header section h1 em {
+    font-size: 0.95em;
+}
+
+header section p {
+    width: 85%;
+    padding: 10px 0 20px 0;
+}
+
+header section button {
+    padding: 0 20px;
+    height: 2.5em;
+    border-radius: 10px;
+    background-color: #98C4FB;
+    border-color: #98C4FB;
+    font-weight: bold;
+    font-size: 1.2em;
+    color: white;
+}
+
+header img.logo {
+    padding: 5px 15px;
+}
+
+nav {
+    border-bottom: 1px solid lightgrey;
+}
+
+nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0; 
+}
+
+nav ul li {
+    display: block;
+    float: left;
+    height: 5em;
+    width: 25%; /*33.333333%;*/
+    background: #000;
+    color: #fff;
+    padding: 15px 0 0 0;
+    margin: 0;
+    border: 0;
+    text-align: center;
+}
+
+nav ul li a {
+    color: #fff;
+    text-decoration: none;
+    padding: 0;
+    margin: 0;
+}
+
+nav a.button {                
+    float: right;
+    padding: 0;
+    margin: 0 10px 0 0;
+    line-height: 0.5em;
+    border: 0;
+    z-index: 100;
+}
+
+main section.version {
+    padding: 20px;
+    text-align: center;
+    background-color: lightgrey;
+    border-bottom: 2px solid white;
+}
+
+main section.version .icon {
+    width: 80px;
+    height: 80px;
+}
+
+main section.features {
+    padding: 20px;
+}
+
+main section.features h2 {
+    margin: 0 0 20px 0;
+    font-size: 1.5em;
+    text-align: left;
+}
+
+main section.features h3 {
+    font-size: 0.9em;
+    font-weight: normal;
+}
+
+main section.feature {
+    float: left;
+    text-align: center;
+    width: 33%;
+}
+
+main section.feature img {
+    width: 100px;
+    height: 100px;
+}
+
+main section.case-studies {
+    position: relative;
+    padding: 20px;
+}
+
+main section.case-studies h2 {
+    margin: 0;
+}
+
+main section.case-studies ul {
+    float: right;
+    padding: 0;
+    margin: 0;
+}
+
+main section.case-studies ul li {
+    float: left;
+    padding: 2px;
+    line-height: 0.4;
+    list-style: none;
+}
+
+main section.case-studies ul li a {
+    text-decoration: none;
+    font-size: 1.4em;
+    line-height: 0.4;
+    color: gray;
+}
+
+main section.case-studies ul li.current a {
+    color: lightskyblue;
+}
+
+main section.case-studies ul li a:before {
+    content: "\2022";
+    font-size: 1.2em;
+}  
+
+main section.case-study {
+    float: left;
+    text-align: left;
+    font-size: 0.8em;
+    line-height: 1.2;
+}
+
+main section.case-study .teaser {
+    width: 100%;
+    height: 150px;
+    background-color: lightskyblue;
+}
+
+main section.case-study h3 {
+    margin-bottom: 5px;
+    font-weight: normal;
+    font-size: 1.4em;
+}
+
+main section.case-study p {
+    margin: 0 0 30px 0;
+}
+
+footer {
+    background-color: lightgrey;
+    text-align: center;
+}
+
+footer > ul {
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+}
+
+footer > ul > li {
+    display: block;
+    float: left;
+    font-size: 0.8em;
+    padding: 1em 1.5em;
+}
+
+footer ul li a {
+    text-decoration: none;
+    color: black;
+}
+
+footer ul li a:hover {
+    text-decoration: underline;
+}
+
+footer .powered-by {
+    font-size: 0.7em;
+}
+
+footer .social-media{
+    background-color: #F4F4F4;
+}
+
+footer .social-media img{
+    height:44px;
+}
+
+.menu {
+    transition: height .5s;
+    height: 5em;
+    overflow: hidden;
+}
+
+.hidden {
+    display: none;
+}
+
+.closed {
+    height: 0;
+}
+
+.clear-float {
+    clear: both;
+}
+
+.seperator {
+    margin: 10px 80px;
+    border-bottom: 1px solid darkgrey;
+}

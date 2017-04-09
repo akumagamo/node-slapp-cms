@@ -1,0 +1,104 @@
+import * as pg from 'pg';
+import * as fs from 'fs';
+
+let client = new pg.Client(process.env.DATABASE_URL); 
+
+const CREATE_TABLE_FILE = "setup-create-CREATE_TABLE_FILE.sql";
+const EXTRA_DATA :{[key:string]: any} = {
+    /*"slug" : "filename"*/
+    "_login" : {file:"_login.html", mime:"text/html"},
+    "_edit" : {file:"_edit.html", mime:"text/html"},
+    "_addin_page_is_loaded" : {file:"_pageloaded.html", mime:"text/html"},
+    "_addin_backend_buttons" : {file:"_backend.html", mime:"text/html"},
+    "_upload" : {file:"_upload.html", mime:"text/html"},
+    "_error_not_found" : {file:"_not_found.html", mime:"text/html"},
+    "_error" : {file:"_error.html", mime:"text/html"},
+
+    "_close.svg" : {file:"images/close.svg", mime:"image/svg+xml"},
+    "_open.svg" : {file:"images/open.svg", mime:"image/svg+xml"},
+    "_edit.svg" : {file:"images/edit.svg", mime:"image/svg+xml"},
+    "_settings.svg" : {file:"images/settings.svg", mime:"image/svg+xml"},
+    "_upload.svg" : {file:"images/upload.svg", mime:"image/svg+xml"},
+    "_save.svg" : {file:"images/save.svg", mime:"image/svg+xml"},
+    
+    "_backend.css" : {file:"styles/backend.css", mime:"text/css"},
+    "_backend.js" : {file:"scripts/backend.js", mime:"text/javascript"},
+    "touch.js" : {file:"scripts/touch.js", mime:"text/javascript"},
+
+    "favicon.ico" : {file:"images/favicon.ico", mime:"image/x-icon", isBinary: true},
+    "landingpage" : {file:"landingpage.html", mime:"text/html", resourceType:"masterpage"},
+    "masterpage" : {file:"masterpage.html", mime:"text/html", resourceType:"masterpage"},
+    "master.css" : {file:"styles/masterpage/master.css", mime:"text/css"},
+    "customizable.png" : {file:"images/masterpage/customizable.png", mime:"image/png", isBinary: true},
+    "forms.png" : {file:"images/masterpage/forms.png", mime:"image/png", isBinary: true},
+    "logo.png" : {file:"images/masterpage/logo.png", mime:"image/png", isBinary: true},
+    "mobile.png" : {file:"images/masterpage/mobile.png", mime:"image/png", isBinary: true},
+    "social.png" : {file:"images/masterpage/social.png", mime:"image/png", isBinary: true},
+    "background.png" : {file:"images/masterpage/background.png", mime:"image/png", isBinary: true},
+    "empty.png" : {file:"images/masterpage/empty.png", mime:"image/png", isBinary: true},
+    "database.png" : {file:"images/masterpage/database.png", mime:"image/png", isBinary: true},
+    "file.png" : {file:"images/masterpage/file.png", mime:"image/png", isBinary: true},
+    "article_0.jpg" : {file:"images/masterpage/article_0.jpg", mime:"image/jpeg", isBinary: true},
+    "article_1.jpg" : {file:"images/masterpage/article_1.jpg", mime:"image/jpeg", isBinary: true},
+    "article_2.jpg" : {file:"images/masterpage/article_2.jpg", mime:"image/jpeg", isBinary: true},
+    "article_3.jpg" : {file:"images/masterpage/article_3.jpg", mime:"image/jpeg", isBinary: true},
+    "" : {file:"root.html", mime:"text/html"}
+    
+};
+
+class SetupCMSDatabase {
+    constructor() {
+        client.connect( function connectToDatabase (err : Error) {
+            if (err) {
+                console.warn("Error onConnecting", err)
+            }
+        });
+    }
+
+    private executeSQLCommand( sqlcommand: string, parameters: any[], callback: any) : void {
+        let that = this;
+        client.query(sqlcommand, parameters, function databaseQuery (err: Error, result: pg.QueryResult) {
+            if (err) {
+                console.warn("Error executing SQL", err);
+            }
+            callback(err);
+        });
+    }
+
+    public createDatabase() : void {
+        let sqlCommand = fs.readFileSync("./sql-commands/" + CREATE_TABLE_FILE ,"utf-8");
+        this.executeSQLCommand(sqlCommand, [], ( data: any ) => console.info(data));
+    }
+
+    public insertResources() : void {
+        this.executeSQLCommand(this.createInsertResourcesText(), [], ( data : any )=>{
+            process.exit();
+        });   
+    }
+
+    public createInsertResourcesText(): string {
+        let sqlCommand = "delete from cms_resources;\r\n"; 
+
+        for(let name in EXTRA_DATA){
+            let item = EXTRA_DATA[name];
+            let isBinary = (item && item.isBinary);
+            
+            let content : any = fs.readFileSync("./setup/default_pages/" + item.file , isBinary ? "binary" : "utf-8") || "";
+
+            let resourceType : string = isBinary ? "binary" : ((item && item.resourceType) || "systempage");
+
+            content = isBinary ? new Buffer(content, "binary").toString('base64') : content.replace(/'/gi,"''") ;
+
+            sqlCommand += `insert into cms_resources(slug, mime_type, value, resource_type, parent_resource_id) 
+                           values ('${name}', '${item.mime}', '${content}', '${resourceType}', null);\r\n`;
+        }
+
+        sqlCommand += `UPDATE cms_resources AS u SET parent_resource_id = x.id
+                       FROM cms_resources AS x WHERE u.slug='' AND x.slug='landingpage';`
+
+        return sqlCommand;
+    }
+}
+
+let setupDatabase = new SetupCMSDatabase();
+setupDatabase.insertResources();

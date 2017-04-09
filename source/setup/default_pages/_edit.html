@@ -1,0 +1,24 @@
+<!doctype html>
+<html>
+    <head>
+        <title>{title}</title>	
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="/_backend.css" rel="stylesheet">
+    </head>
+    <body class='edit-page'>
+        <form method='post' enctype='application/x-www-form-urlencoded'>
+            <label for='resourceType'>{labelResourceType}</label><br />
+            <select name='resourceType' >
+                <option {resourceType_page} value='page'>Page</option>
+                <option {resourceType_form} value='form'>Form</option>
+                <option {resourceType_masterpage} value='masterpage'>Masterpage</option>
+            </select>&nbsp;&nbsp;&nbsp;&nbsp;<select name='parentResourceId'>
+                {master_pages}
+            </select><br>
+            <label for='value'>{labelValue}</label><br />
+            <textarea name='value'>{value}</textarea><br />
+            <button class="save-button"></button><br />
+        </form>
+    </body>
+</html>

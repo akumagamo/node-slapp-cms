@@ -1,0 +1,15 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "noImplicitAny": true,
+        "removeComments": true,
+        "preserveConstEnums": true,
+        "sourceMap": true,
+        "target": "es6",
+        "typeRoots" : ["source/node_modules/@types"],
+        "types" : ["node", "pg", "mocha"]
+    },
+    "exclude": [
+        "node_modules*/**"
+    ]
+}
