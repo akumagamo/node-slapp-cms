@@ -26,7 +26,6 @@ export namespace CMSBase {
         "ERROR" : "_error",
         "ERROR_NOT_FOUND" : "_error_not_found",
         "SETTINGS" : "_edit",
-      //  "MASTER_PAGE" : "masterpage",
         "EDIT" : "_edit",
         "ADDIN_PAGE_IS_LOADED" : "_addin_page_is_loaded",
         "ADDIN_BACKEND_BUTTONS" : "_addin_backend_buttons"

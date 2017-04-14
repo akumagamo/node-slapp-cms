@@ -13,9 +13,11 @@ html{
     height:100%;
 }
 
-.edit-page textarea {
+.edit-page .editor {
     width: 100%;
     height: 85%;
+    border:1px solid gray;
+    overflow: auto;
 }
 
 .edit-page label {

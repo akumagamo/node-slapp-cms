@@ -16,7 +16,7 @@
             "type": "node",
             "request": "launch",
             "name": "Launch Program",
-            "program": "${workspaceRoot}\\app.js",
+            "program": "${workspaceRoot}/source/app.js",
             "cwd": "${workspaceRoot}",
             "env": {
                 "DATABASE_URL":"postgres://demo:123@localhost/cms"

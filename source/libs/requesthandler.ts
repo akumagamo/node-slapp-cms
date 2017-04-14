@@ -15,6 +15,12 @@ import { UserBase, IUser } from './userbase';
 
 import { Utils } from './utils';
 
+
+/*** CHECK */
+
+import * as fs from 'fs';
+
+
 const IS_DEVELOPMENT_MODE: boolean = true;
 
 let ResourceTypes = CMSBase.ResourceTypes;
@@ -22,7 +28,8 @@ let SystemPages = CMSBase.SystemPages;
 let MimeType = CMSBase.MimeTypes;
 
 const NO_SESSION = "";
-const SESSION_TIMEOUT = 5 * 60 * 1000;
+/* hours * minutes * Seconds * milliseconds    */
+const SESSION_TIMEOUT = 24 * 60 * 60 * 1000;
 
 export interface IRedirect {
     status: number;
@@ -82,9 +89,13 @@ export class RequestHandler {
         let hasValidSession: boolean = RequestHandler.isValidSession(sessionKey);
 
         that.getRequestedResource(request, sessionKey, hasValidSession)
-            .then((resource: ICMSResource) => 
-                that.renderResource(request, response, acceptedEncoding, resource, sessionKey, hasValidSession)
-            )
+            .then((resource: ICMSResource|any) =>  {
+                if(resource.resourceType !== undefined) {
+                    that.renderResource(request, response, acceptedEncoding, resource, sessionKey, hasValidSession);
+                } else {
+                    that.renderOutput(response, acceptedEncoding, resource)
+                }
+            })
             .catch((resource: ICMSResource| IRedirect) => {
                 if((resource as IRedirect).status===302) {
                     let redirect: IRedirect = resource as IRedirect;
@@ -118,6 +129,15 @@ export class RequestHandler {
         let requestedUrl: url.Url = url.parse(request.url, true);
         let slug: string =  requestedUrl.pathname.split("/")[1];
         
+        if(requestedUrl.path.indexOf("public") !== -1) {
+            console.info(process.cwd(), __dirname, requestedUrl);
+            return new Promise((resolve:any) =>{
+                fs.readFile("." + requestedUrl.path, (error, data) => {
+                    resolve(data);
+                })
+            });
+        }
+
         if(requestedUrl.path.indexOf("?login") === -1)   {
             return that.resourceLoader.getResource(slug);
         }
@@ -302,6 +322,8 @@ export class RequestHandler {
                     output = this.systemPages[SystemPages.UPLOAD].value;
                 }
             } else if(resource.resourceType === ResourceTypes.FORM) {
+                let OkResponse = {status:"ok"} ;
+                let ErrorResponse = {status:"error"} ;
                 let urlParts = requestedUrl.pathname.split("/");
                 that.resourceLoader.getResource(slug)
                     .then((resource: ICMSResource) => {
@@ -311,7 +333,7 @@ export class RequestHandler {
                                 switch(requestMethod){
                                     case "GET":
                                         if (item === undefined || item.allow === undefined || item.allow.query === false) {
-                                            throw "NOT ALLOWED EXCEPTION";
+                                            that.renderOutput(response, acceptedEncoding, JSON.stringify(ErrorResponse), MimeType.JSON);
                                         }
                                         if (urlParts.length === 3 && !isNaN(parseInt(urlParts[2]))) {
                                             let id = parseInt(urlParts[2]);
@@ -328,12 +350,9 @@ export class RequestHandler {
                                         break;
                                     case "POST":
                                         if (item === undefined || item.allow === undefined || item.allow.insert === false) {
-                                            console.info("NOT ALLOWED INSERT/UPDATE EXCEPTION");
-                                            throw "NOT ALLOWED EXCEPTION";
+                                            that.renderOutput(response, acceptedEncoding, JSON.stringify(ErrorResponse), MimeType.JSON);
                                         }
-
                                         that.getPostData(request).then((postdata: any) => {
-console.info(postdata);
                                             let isValid = true;
                                             for(let idx in item.fields) {
                                                 let field = item.fields[idx];
@@ -341,26 +360,22 @@ console.info(postdata);
                                                     (new RegExp(field.validation)).test(postdata["value"][field.name]);
                                                 
                                                 if(!isValid) {
-                                                    break;
+                                                    that.renderOutput(response, acceptedEncoding, JSON.stringify(ErrorResponse), MimeType.JSON);
+                                                    return;
                                                 }                                               
                                             }
-
-                                            if (!isValid) {
-                                                console.info("NOT VALID");
-                                                that.renderCatchAllError(response);
-                                            }   
 
                                             if (urlParts.length === 2) {
                                                 let obj = new CMSFormItem(-1, slug, postdata.value);
                                                 that.formItemsLoader.saveFormItem(obj)
                                                     .then((formitem: ICMSFormItem) => {
-                                                        that.redirectTo(response, slug, sessionKey);
+                                                        that.renderOutput(response, acceptedEncoding, JSON.stringify(OkResponse), MimeType.JSON);
                                                     });
                                             } else if(urlParts.length === 3 && !isNaN(parseInt(urlParts[2]))) {
                                                 let obj = new CMSFormItem(parseInt(urlParts[2]), slug, postdata.value);
                                                 that.formItemsLoader.saveFormItem(obj)
                                                     .then((formitem: ICMSFormItem) => {
-                                                        that.redirectTo(response, slug, sessionKey);
+                                                        that.renderOutput(response, acceptedEncoding, JSON.stringify(OkResponse), MimeType.JSON);
                                                     });
                                             } else {
                                                 console.warn("NOT IMPLEMENTED");
@@ -373,23 +388,22 @@ console.info(postdata);
                                         break;
                                     case "DELETE":
                                         if (item === undefined || item.allow === undefined || item.allow.delete === false) {
-                                            throw "NOT ALLOWED EXCEPTION";
+                                            that.renderOutput(response, acceptedEncoding, JSON.stringify(ErrorResponse), MimeType.JSON);
                                         }
                                         if (urlParts.length === 3 && !isNaN(parseInt(urlParts[2]))) {
                                             let id = parseInt(urlParts[2]);
                                             that.formItemsLoader.deleteFormItemWithId(id)
-                                                .then(function (success: boolen) {
-                                                    that.redirectTo(response, slug, sessionKey);
+                                                .then(function (success: boolean) {
+                                                    that.renderOutput(response, acceptedEncoding, JSON.stringify(OkResponse), MimeType.JSON);
                                                 });
                                         } else {
-                                            that.renderCatchAllError(response);
+                                            that.renderOutput(response, acceptedEncoding, JSON.stringify(ErrorResponse), MimeType.JSON);
                                         }
                                         break;
                                 }        
 
                             } catch (error) {
-                                console.warn("ERROR", error);
-                                that.renderCatchAllError(response);
+                                that.renderOutput(response, acceptedEncoding, JSON.stringify(ErrorResponse), MimeType.JSON);
                             }
                         }
                     });
@@ -408,11 +422,13 @@ console.info(postdata);
         this.renderOutput(response, acceptedEncoding, output, resource.mimeType);
     }
 
-    private renderOutput(response: http.ServerResponse, acceptedEncoding: string, output: (string | Buffer), mimetype: string){
+    private renderOutput(response: http.ServerResponse, acceptedEncoding: string, output: (string | Buffer), mimetype?: string): void {
         let outputStream: stream.Readable = new stream.Readable();
         let encoder: stream.PassThrough = this.setEncodingResponseHeader(response, acceptedEncoding);
         
-        response.setHeader("content-type", mimetype);
+        if(mimetype!==undefined){
+            response.setHeader("content-type", mimetype);
+        }
         outputStream.push(output);
         outputStream.push(null);
         outputStream.pipe(encoder).pipe(response);
