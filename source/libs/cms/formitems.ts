@@ -1,6 +1,6 @@
-import { Utils }  from './utils';
-import { ICMSFormItem, CMSFormItem } from './cmsformitem';
-import { IDataConnector, DataFormItemCallback } from './dataconnector/dataconnector';
+import { Utils }  from '../utils';
+import { ICMSFormItem, CMSFormItem } from './formitem';
+import { IDataConnector, DataFormItemCallback } from '../dataconnector/dataconnector';
 
 export class CMSFormItems {
     constructor(private connection: IDataConnector) { }
@@ -8,7 +8,9 @@ export class CMSFormItems {
     getFormItemWithId(id: number): Promise<ICMSFormItem> {
         return this.connection.getFormItemPromiseWithId(id).then((formitem:ICMSFormItem) => {
             if(formitem!==undefined){
-                formitem.value = JSON.parse(formitem.value);
+                if(typeof formitem.value === "string"){
+                    formitem.value = JSON.parse(formitem.value);
+                }
             }
             return formitem;
         });
@@ -18,11 +20,13 @@ export class CMSFormItems {
         return this.connection.deleteFormItemWithId(id);
     }
 
-     getAllFormItems(datatype: string): Promise<ICMSFormItem[]> {
+    getAllFormItems(datatype: string): Promise<ICMSFormItem[]> {
         return this.connection.getAllFormItems(datatype)
-            .then((fs: ICMSFormItem[]) => fs.map(i => {
-                i.value = JSON.parse(i.value)
-                return i;
+            .then((fs: ICMSFormItem[]) => fs.map(formitem => {
+                if(typeof formitem.value ==="string"){
+                    formitem.value = JSON.parse(formitem.value);
+                }
+                return formitem;
             }));
     }
 

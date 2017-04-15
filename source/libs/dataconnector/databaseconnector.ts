@@ -2,8 +2,8 @@ import * as pg from 'pg';
 import { IDataConnector, 
          DataResourceCallback, 
          DataFormItemCallback } from './dataconnector';
-import { ICMSResource } from '../cmsresource';
-import { ICMSFormItem } from '../cmsformitem';
+import { ICMSResource } from '../cms/resource';
+import { ICMSFormItem } from '../cms/formitem';
 
 let client = new pg.Client(process.env.DATABASE_URL); 
 

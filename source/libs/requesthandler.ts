@@ -4,12 +4,12 @@ import * as querystring from 'querystring';
 import * as stream from 'stream';
 import * as zlib from 'zlib';
 
-import { CMSResources } from './cmsresources';
-import { CMSFormItems } from './cmsformitems';
+import { CMSResources } from './cms/resources';
+import { CMSFormItems } from './cms/formitems';
 
-import { ICMSFormItem, CMSFormItem } from './cmsformitem';
-import { ICMSResource, CMSResource } from './cmsresource';
-import { CMSBase } from './cmsbase';
+import { ICMSFormItem, CMSFormItem } from './cms/formitem';
+import { ICMSResource, CMSResource } from './cms/resource';
+import { CMSBase } from './cms/base';
 
 import { UserBase, IUser } from './userbase';
 
@@ -90,30 +90,22 @@ export class RequestHandler {
             
         that.getRequestedResource(request, sessionKey, hasValidSession)
             .then((resource: ICMSResource|any) =>  {
-                console.info(1, resource?resource.slug:"$$$");
                 if(resource.resourceType !== undefined) {
-                    console.info(2);
                     that.renderResource(request, response, acceptedEncoding, resource, sessionKey, hasValidSession);
                 } else {
-                    console.info(3);
                     that.renderOutput(response, acceptedEncoding, resource)
                 }
-                console.info(4);
             })
             .catch((resource: ICMSResource| IRedirect) => {
-                console.info(5);
                 if((resource as IRedirect).status===302) {
-                    console.info(6);
                     let redirect: IRedirect = resource as IRedirect;
                     that.redirectTo(response, redirect.newLocation, redirect.sessionKey);
                 } else {
-                    console.info(7);
                     Promise.resolve(this.systemPages[SystemPages.ERROR_NOT_FOUND])
                         .then((resource: ICMSResource) =>
                             that.renderResource(request, response, acceptedEncoding, resource, sessionKey, hasValidSession)
                         ).catch(( ) => that.renderCatchAllError(response));
                 }
-                console.info(8);
             });
     }
 
@@ -262,6 +254,7 @@ export class RequestHandler {
                         let editedPage: ICMSResource = new CMSResource(slug, postdata.value);
                         Utils.assign(editedPage, postdata);
                         editedPage.mimeType = editedPage.resourceType === ResourceTypes.FORM ? MimeType.JSON : editedPage.mimeType;
+                        editedPage.parentResourceId = parseInt(postdata.parentResourceId);
                         that.resourceLoader.saveResourcePromise(editedPage)
                             .then(() =>{
                                  that.redirectTo(response, slug, sessionKey) 
@@ -281,7 +274,7 @@ export class RequestHandler {
                             let options = "<option value='-1'>none</option>";
                             for(let idx in this.MasterPages){
                                 let masterpage = this.MasterPages[idx];
-                                options += `<option value='${masterpage.id}' ${resource.parentResourceId===masterpage.id?"selected":""}>${masterpage.slug}</option>`;
+                                options += `<option value='${masterpage.id}' ${(resource.parentResourceId===masterpage.id)?"selected":""}>${masterpage.slug}</option>`;
                             }
                             return options;
                         })
@@ -340,8 +333,9 @@ export class RequestHandler {
                                 let item = JSON.parse(resource.value); 
                                 switch(requestMethod){
                                     case "GET":
-                                        if (item === undefined || item.allow === undefined || item.allow.query === false) {
+                                        if (item === undefined || item.allow === undefined || item.allow.query !== true) {
                                             that.renderOutput(response, acceptedEncoding, JSON.stringify(ErrorResponse), MimeType.JSON);
+                                            return;
                                         }
                                         if (urlParts.length === 3 && !isNaN(parseInt(urlParts[2]))) {
                                             let id = parseInt(urlParts[2]);
@@ -351,19 +345,21 @@ export class RequestHandler {
                                                 });
                                         } else {
                                             that.formItemsLoader.getAllFormItems(resource.slug)
-                                                .then(function (formitems: ICMSFormItem[]) {
-                                                    that.renderOutput(response, acceptedEncoding, JSON.stringify(formitems), MimeType.JSON);
-                                                });
+                                            .then(function (formitems: ICMSFormItem[]) {
+                                                that.renderOutput(response, acceptedEncoding, JSON.stringify(formitems), MimeType.JSON);
+                                            });
                                         }
                                         break;
                                     case "POST":
-                                        if (item === undefined || item.allow === undefined || item.allow.insert === false) {
+                                        if (item === undefined || item.allow === undefined || item.allow.insert !== true) {
                                             that.renderOutput(response, acceptedEncoding, JSON.stringify(ErrorResponse), MimeType.JSON);
+                                            return;
                                         }
                                         that.getPostData(request).then((postdata: any) => {
                                             let isValid = true;
                                             for(let idx in item.fields) {
                                                 let field = item.fields[idx];
+
                                                 isValid = postdata["value"].hasOwnProperty(field.name) &&
                                                     (new RegExp(field.validation)).test(postdata["value"][field.name]);
                                                 
@@ -395,8 +391,9 @@ export class RequestHandler {
                                         that.renderCatchAllError(response);
                                         break;
                                     case "DELETE":
-                                        if (item === undefined || item.allow === undefined || item.allow.delete === false) {
+                                        if (item === undefined || item.allow === undefined || item.allow.delete !== true) {
                                             that.renderOutput(response, acceptedEncoding, JSON.stringify(ErrorResponse), MimeType.JSON);
+                                            return;
                                         }
                                         if (urlParts.length === 3 && !isNaN(parseInt(urlParts[2]))) {
                                             let id = parseInt(urlParts[2]);

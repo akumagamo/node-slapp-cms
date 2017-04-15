@@ -1,13 +1,15 @@
 import * as pg from 'pg';
 import * as fs from 'fs';
 
-import { CMSResource } from '../libs/cmsresource';
+import { CMSResource } from '../libs/cms/resource';
 
 let client = new pg.Client(process.env.DATABASE_URL);
 
 const CREATE_TABLE_FILE = "setup-create-CREATE_TABLE_FILE.sql";
 const EXTRA_DATA: { [key: string]: any } = {
     /*"slug" : "filename"*/
+
+
     "_login": { file: "_login.html", mime: "text/html" },
     "_edit": { file: "_edit.html", mime: "text/html" },
     "_addin_page_is_loaded": { file: "_pageloaded.html", mime: "text/html" },
@@ -44,7 +46,9 @@ const EXTRA_DATA: { [key: string]: any } = {
     "article_1.jpg": { file: "images/masterpage/article_1.jpg", mime: "image/jpeg", isBinary: true },
     "article_2.jpg": { file: "images/masterpage/article_2.jpg", mime: "image/jpeg", isBinary: true },
     "article_3.jpg": { file: "images/masterpage/article_3.jpg", mime: "image/jpeg", isBinary: true },
-    "": { file: "root.html", mime: "text/html" }
+    "": { file: "root.html", mime: "text/html", resourceType: "page" },
+    "test-form": { file: "_test_form", mime: "application/json", resourceType: "form"  },
+    "test-form-ui": { file: "_test_form_ui.html", mime: "text/html", resourceType: "page"  }
 
 };
 
@@ -99,15 +103,16 @@ class SetupCMSDatabase {
         }
 
         sqlCommand += `UPDATE cms_resources AS u SET parent_resource_id = x.id
-                       FROM cms_resources AS x WHERE u.slug='' AND x.slug='landingpage';`
+                       FROM cms_resources AS x WHERE u.resource_type='page' AND x.slug='landingpage';`
 
         return sqlCommand;
     }
 
-
     public createFileDatabase(folder: string): void {
         let objects = [];
         let counter: number = 0;
+        let masterpageHelper:  number = 0;
+        let landingpageHelper:  number = 0;
         for (let name in EXTRA_DATA) {
             let item = EXTRA_DATA[name];
             let isBinary = (item && item.isBinary);
@@ -118,11 +123,19 @@ class SetupCMSDatabase {
 
             content = isBinary ? new Buffer(content, "binary").toString('base64') : content;
 
+            if(name==="landingpage"){
+                landingpageHelper = counter;
+            }
+
+            if(name==="masterpage"){
+                masterpageHelper = counter;
+            }
+
             let obj = new CMSResource((name===""?"_root":name), content);
             obj.id = counter;
             obj.resourceType = resourceType;
             obj.mimeType = item.mime;
-            obj.parentResourceId = name===""?0:-1;
+            obj.parentResourceId = resourceType==="page"?(name===""?landingpageHelper: masterpageHelper):-1;
 
             objects.push(obj);
             counter++;

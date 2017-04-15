@@ -1,5 +1,5 @@
-import { ICMSResource } from '../cmsresource';
-import { ICMSFormItem } from '../cmsformitem';
+import { ICMSResource } from '../cms/resource';
+import { ICMSFormItem } from '../cms/formitem';
 
 export type DataResourceCallback = (resource: ICMSResource[])=> void;
 export type DataFormItemCallback = (formitem: ICMSFormItem[])=> void;

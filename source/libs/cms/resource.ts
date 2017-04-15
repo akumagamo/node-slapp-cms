@@ -1,4 +1,4 @@
-import { CMSBase } from './cmsbase';
+import { CMSBase } from './base';
 
 let ResourceTypes = CMSBase.ResourceTypes;
 let MimeTypes = CMSBase.MimeTypes;

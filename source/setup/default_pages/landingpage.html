@@ -24,42 +24,49 @@
             }
 
             window.addEventListener("load", e => {
-                let start = TouchHandler.startTouch.bind(TouchHandler);
-                let move = TouchHandler.moveTouch.bind(TouchHandler);
-                let end = TouchHandler.endTouch.bind(TouchHandler);
-                document.addEventListener("touchstart", start, false);
-                document.addEventListener("touchmove", move, false);
+                try{
+                    let caseStudiesElement = document.querySelector(".case-studies"); 
+                    if(caseStudiesElement !== null){
+                        let start = TouchHandler.startTouch.bind(TouchHandler);
+                        let move = TouchHandler.moveTouch.bind(TouchHandler);
+                        let end = TouchHandler.endTouch.bind(TouchHandler);
+                        document.addEventListener("touchstart", start, false);
+                        document.addEventListener("touchmove", move, false);
 
-                document.querySelector(".case-studies").addEventListener("touchend", e => {
-                    let swipeDirection = end(e);
-                    let current = document.querySelector(".case-studies section:not(.hidden)");
-                    let marker =  document.querySelector(".case-studies li.current");
-                    let nextItem;
+                        caseStudiesElement.addEventListener("touchend", e => {
+                            let swipeDirection = end(e);
+                            let current = document.querySelector(".case-studies section:not(.hidden)");
+                            let marker =  document.querySelector(".case-studies li.current");
+                            let nextItem;
 
-                    if(swipeDirection === TouchHandler.SWIPE_DIRECTION.LEFT){
-                        current.className +=  " hidden";
-                        marker.className = "";
-                        nextItem = current.nextElementSibling;
-                        marker = marker.nextElementSibling;
-                        if(nextItem === undefined || nextItem.tagName.toLowerCase()!=="section"){
-                            nextItem = document.querySelector(".case-studies section:first-of-type");
-                            marker = document.querySelector(".case-studies li:first-of-type");
-                        }
-                        nextItem.className = nextItem.className.replace(/\shidden/gi,"");
-                                            marker.className = "current";
-                    } else if(swipeDirection === TouchHandler.SWIPE_DIRECTION.RIGHT) {
-                        current.className +=  " hidden";
-                        marker.className = "";
-                        nextItem = current.previousElementSibling;
-                        marker = marker.previousElementSibling;
-                        if(nextItem === undefined || nextItem.tagName.toLowerCase()!=="section"){
-                            nextItem = document.querySelector(".case-studies section:last-of-type");
-                            marker = document.querySelector(".case-studies li:last-of-type");
-                        }
-                        nextItem.className = nextItem.className.replace(/\shidden/gi,"");
-                        marker.className = "current";
+                            if(swipeDirection === TouchHandler.SWIPE_DIRECTION.LEFT){
+                                current.className +=  " hidden";
+                                marker.className = "";
+                                nextItem = current.nextElementSibling;
+                                marker = marker.nextElementSibling;
+                                if(nextItem === undefined || nextItem.tagName.toLowerCase()!=="section"){
+                                    nextItem = document.querySelector(".case-studies section:first-of-type");
+                                    marker = document.querySelector(".case-studies li:first-of-type");
+                                }
+                                nextItem.className = nextItem.className.replace(/\shidden/gi,"");
+                                                    marker.className = "current";
+                            } else if(swipeDirection === TouchHandler.SWIPE_DIRECTION.RIGHT) {
+                                current.className +=  " hidden";
+                                marker.className = "";
+                                nextItem = current.previousElementSibling;
+                                marker = marker.previousElementSibling;
+                                if(nextItem === undefined || nextItem.tagName.toLowerCase()!=="section"){
+                                    nextItem = document.querySelector(".case-studies section:last-of-type");
+                                    marker = document.querySelector(".case-studies li:last-of-type");
+                                }
+                                nextItem.className = nextItem.className.replace(/\shidden/gi,"");
+                                marker.className = "current";
+                            }
+                        });
                     }
-                });
+                }catch(e){
+                    console.warn(e);
+                }
             });
 
         </script>

@@ -2,8 +2,8 @@ import * as http from 'http';
 import { IDataConnector } from './libs/dataconnector/dataconnector';
 import { DatabaseConnector } from './libs/dataconnector/databaseconnector';
 import { FileConnector } from './libs/dataconnector/fileconnector';
-import { CMSResources } from './libs/cmsresources';
-import { CMSFormItems } from './libs/cmsformitems';
+import { CMSResources } from './libs/cms/resources';
+import { CMSFormItems } from './libs/cms/formitems';
 import { RequestHandler } from './libs/requesthandler';
 
 const WEBSERVER_PORT = process.env.PORT || 80;

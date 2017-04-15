@@ -1,0 +1,21 @@
+<div>
+    <label>Email: </label><br />
+    <input id="email" type="email">
+    <button id="submitButton">save</button>
+    <script>
+        let emailFormField = document.getElementById("email");
+        document.getElementById("submitButton").addEventListener("click", e =>{
+            console.info("start");
+            let xhr = new XMLHttpRequest();
+            xhr.open("POST", "/test-form", true);
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.onreadystatechange = function () {
+                if(xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200 ) {
+                    let response = JSON.parse(xhr.responseText);
+                    console.log("DONE", response);
+                }
+            };
+            xhr.send(JSON.stringify({value: {email: emailFormField.value } }));
+        });
+    </script>
+</div>

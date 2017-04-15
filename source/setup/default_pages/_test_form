@@ -1,0 +1,14 @@
+{
+    "allow": {
+        "query": true,
+        "insert": true
+    },
+    "dataType": "newsletter",
+    "fields": [
+        {
+            "name": "email",
+            "type": "string",
+            "validation": ".+@.+\\..+"
+        }
+    ]
+}

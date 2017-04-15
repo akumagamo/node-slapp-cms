@@ -1,5 +1,5 @@
-import { ICMSResource, CMSResource } from './cmsresource';
-import { IDataConnector, DataResourceCallback } from './dataconnector/dataconnector';
+import { ICMSResource, CMSResource } from './resource';
+import { IDataConnector, DataResourceCallback } from '../dataconnector/dataconnector';
 
 export class CMSResources {
     constructor(private connection: IDataConnector) { }
