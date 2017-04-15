@@ -1,6 +1,7 @@
-/node_modules
-/out
-/**/*.map
-/**/*.js
+node_modules/
+file_data/
+out/
+**/*.map
+**/*.js
 
 npm-debug.log

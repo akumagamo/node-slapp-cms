@@ -1,15 +1,22 @@
 import * as http from 'http';
+import { IDataConnector } from './libs/dataconnector/dataconnector';
 import { DatabaseConnector } from './libs/dataconnector/databaseconnector';
-//import { FileConnector } from './libs/dataconnector/fileconnector';
+import { FileConnector } from './libs/dataconnector/fileconnector';
 import { CMSResources } from './libs/cmsresources';
 import { CMSFormItems } from './libs/cmsformitems';
 import { RequestHandler } from './libs/requesthandler';
 
 const WEBSERVER_PORT = process.env.PORT || 80;
-let databaseConnector = new DatabaseConnector();
-//let databaseConnector = new FileConnector("file_data");
-let cmsResources = new CMSResources(databaseConnector);
-let cmsFormItems = new CMSFormItems(databaseConnector);
+let connector: IDataConnector;
+
+if(process.env.npm_package_at_slapps_connection === "file") {
+    connector =  new FileConnector(process.env.npm_package_at_slapps_folder);
+} else { 
+    connector  = new DatabaseConnector();
+}
+
+let cmsResources = new CMSResources(connector);
+let cmsFormItems = new CMSFormItems(connector);
 let requesthandler = new RequestHandler(cmsResources, cmsFormItems, true);
 
 requesthandler.initialize().then(( ) => {

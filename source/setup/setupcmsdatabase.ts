@@ -106,11 +106,8 @@ class SetupCMSDatabase {
 
 
     public createFileDatabase(folder: string): void {
-
-        // Delete FOLDER and FILES
-
         let objects = [];
-
+        let counter: number = 0;
         for (let name in EXTRA_DATA) {
             let item = EXTRA_DATA[name];
             let isBinary = (item && item.isBinary);
@@ -122,10 +119,13 @@ class SetupCMSDatabase {
             content = isBinary ? new Buffer(content, "binary").toString('base64') : content;
 
             let obj = new CMSResource((name===""?"_root":name), content);
+            obj.id = counter;
             obj.resourceType = resourceType;
             obj.mimeType = item.mime;
+            obj.parentResourceId = name===""?0:-1;
 
             objects.push(obj);
+            counter++;
         }
 
         this.writeFile(objects, folder);
@@ -136,7 +136,7 @@ class SetupCMSDatabase {
         let obj = objects.pop();
 
         if (obj !== undefined) {
-            fs.writeFile(folder + "/" + obj.slug, JSON.stringify(obj), err => {
+            fs.writeFile(folder + "/"+ (obj.resourceType === "masterpage"? "masterpages": "resources") + "/" + obj.slug, JSON.stringify(obj), err => {
                 console.info(objects.length, err);
                 that.writeFile(objects, folder);
             });

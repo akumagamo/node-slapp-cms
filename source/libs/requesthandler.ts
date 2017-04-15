@@ -87,25 +87,33 @@ export class RequestHandler {
 
         let sessionKey: string = RequestHandler.getSessionKey(request);
         let hasValidSession: boolean = RequestHandler.isValidSession(sessionKey);
-
+            
         that.getRequestedResource(request, sessionKey, hasValidSession)
             .then((resource: ICMSResource|any) =>  {
+                console.info(1, resource?resource.slug:"$$$");
                 if(resource.resourceType !== undefined) {
+                    console.info(2);
                     that.renderResource(request, response, acceptedEncoding, resource, sessionKey, hasValidSession);
                 } else {
+                    console.info(3);
                     that.renderOutput(response, acceptedEncoding, resource)
                 }
+                console.info(4);
             })
             .catch((resource: ICMSResource| IRedirect) => {
+                console.info(5);
                 if((resource as IRedirect).status===302) {
+                    console.info(6);
                     let redirect: IRedirect = resource as IRedirect;
                     that.redirectTo(response, redirect.newLocation, redirect.sessionKey);
                 } else {
+                    console.info(7);
                     Promise.resolve(this.systemPages[SystemPages.ERROR_NOT_FOUND])
                         .then((resource: ICMSResource) =>
                             that.renderResource(request, response, acceptedEncoding, resource, sessionKey, hasValidSession)
                         ).catch(( ) => that.renderCatchAllError(response));
                 }
+                console.info(8);
             });
     }
 

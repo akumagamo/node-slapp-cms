@@ -5,7 +5,11 @@ import { IDataConnector,
 import { ICMSResource } from '../cmsresource';
 import { ICMSFormItem } from '../cmsformitem';
 
+import { CMSBase } from '../cmsbase';
+
 import * as fs from 'fs';
+
+let ResourceTypes = CMSBase.ResourceTypes;
 
 export class FileConnector implements IDataConnector {
 
@@ -13,16 +17,12 @@ export class FileConnector implements IDataConnector {
 
     public getResourceWithSlug(slug: string, ismasterpage:boolean=false): Promise<ICMSResource> {
         return new Promise((resolve, reject) => {
-            slug = slug===""?"_root":slug;
-            console.info("slug", slug, ismasterpage);
+            slug = slug === "" ? "_root":slug;
             fs.readFile(this.dataFolder + (ismasterpage?"/masterpages/":"/resources/") + slug, { encoding: "utf8" }, (error, data) =>{   
-                console.info("GET SLUG", slug, JSON.parse(data).slug)
-                if(error !== undefined) {
-                    console.info("+++++++++++++++");
+                if(error === null) {
                     resolve(JSON.parse(data));
                 } else {
-                    console.info("---------------");
-                    reject(null);
+                    resolve(undefined);
                 }
                 
             })
@@ -30,11 +30,20 @@ export class FileConnector implements IDataConnector {
     }
 
     public updateResource(resource: ICMSResource): Promise<any> {
-        return null;
+        return this.createResource(resource);
     }
 
     public createResource(resource: ICMSResource): Promise<any>{
-        return null;
+        return new Promise((resolve, reject) => {
+            let slug = resource.slug === ""?"_root":resource.slug;
+            fs.writeFile(this.dataFolder + (resource.resourceType  === ResourceTypes.MASTER_PAGE ?"/masterpages/":"/resources/") + slug, 
+                JSON.stringify(resource) ,{ encoding: "utf8" }, 
+                (error: any) => {   
+                    if(error !== undefined) {
+                        resolve(resource);
+                    }
+            });
+        });
     }
 
     public getMasterPages(): Promise<ICMSResource[]> {
@@ -54,7 +63,6 @@ export class FileConnector implements IDataConnector {
                 promise.then((resources:ICMSResource[]) => resolve(resources));
             });
         });
-
     }
 
     public getFormItemPromiseWithId(id: number): Promise<ICMSFormItem> {

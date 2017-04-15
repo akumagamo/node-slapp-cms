@@ -5,23 +5,6 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link href="/_backend.css" rel="stylesheet">
-        <script src="/public/js/tinymce.min.js"></script>
-        <script>
-            window.addEventListener("load", event => {
-                tinymce.init({
-                    selector: '#value',
-                    theme: 'inlite',
-                    plugins: 'image table link paste contextmenu textpattern autolink code',
-                    selection_toolbar: 'bold italic | quicklink h2 h3 blockquote',
-                    contextmenu: "link image inserttable | cell row column deletetable | code",
-                    inline: true,
-                    paste_data_images: true,
-                    content_css: [
-                        '/master.css'
-                    ]
-                });
-            });
-        </script>
     </head>
     <body class='edit-page'>
         <form method='post' enctype='application/x-www-form-urlencoded'>
@@ -34,9 +17,7 @@
                 {master_pages}
             </select><br>
             <label for='value'>{labelValue}</label><br />
-
-            <div class="editor" id="value">{value}</div><br />
-
+            <textarea class="editor" id="value" name="value">{value}</textarea><br />
             <button class="save-button"></button><br />
         </form>
     </body>
