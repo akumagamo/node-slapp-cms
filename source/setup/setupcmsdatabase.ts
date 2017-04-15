@@ -119,7 +119,7 @@ class SetupCMSDatabase {
 
             let resourceType: string = isBinary ? "binary" : ((item && item.resourceType) || "systempage");
 
-            content = isBinary ? new Buffer(content, "binary").toString('base64') : content.replace(/'/gi, "''");
+            content = isBinary ? new Buffer(content, "binary").toString('base64') : content;
 
             let obj = new CMSResource((name===""?"_root":name), content);
             obj.resourceType = resourceType;
