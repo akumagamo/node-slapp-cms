@@ -15,11 +15,7 @@ import { UserBase, IUser } from './userbase';
 
 import { Utils } from './utils';
 
-
-/*** CHECK */
-
 import * as fs from 'fs';
-
 
 const IS_DEVELOPMENT_MODE: boolean = true;
 
