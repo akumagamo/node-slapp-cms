@@ -274,7 +274,7 @@ export class RequestHandler {
                             }
                             return options;
                         })
-                        .replace(/{value}/gi, resource.value);
+                        .replace(/{url}/gi, `/${slug}?template`)
                 }      
             } else if(validsession && requestedUrl.path.indexOf("?setting") > -1) {
                 if(requestMethod === "POST"){
@@ -289,7 +289,8 @@ export class RequestHandler {
                     });
                     return;
                 } else {
-                    resource = undefined; //this.systemPages[SystemPages.MASTER_PAGE];
+                    console.info(this.MasterPages[resource.parentResourceId].slug);
+                    resource = this.MasterPages[resource.parentResourceId];
                     output = this.systemPages[SystemPages.EDIT].value
                         .replace(/{title}/gi, resource.slug)
                         .replace(/{labelValue}/gi, "Content")
@@ -298,7 +299,7 @@ export class RequestHandler {
                         (m: any, p: any) => p === resource.resourceType ? "selected" : "")
                         .replace(/{parentResourceId(-?\d)}/gi,
                         (m: any, p: any) => p == resource.parentResourceId ? "selected" : "")
-                        .replace(/{value}/gi, resource.value);
+                        .replace(/{url}/gi, `/${slug}?masterpage`)
                 } 
             } else if(validsession && requestedUrl.path.indexOf("?upload") > -1) {
                 if(requestMethod === "POST") {
@@ -409,6 +410,10 @@ export class RequestHandler {
                         }
                     });
                     return;
+            } else if(requestedUrl.path.indexOf("?masterpage")>-1){
+                output = this.MasterPages[resource.parentResourceId].value;
+            } else if(requestedUrl.path.indexOf("?template")>-1){
+                output = resource.value;
             } else {
                 output = (this.getResourceOutput(resource) as string)
                     .replace(/<\/body>/, that.systemPages[SystemPages.ADDIN_PAGE_IS_LOADED].value)

@@ -5,6 +5,25 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link href="/_backend.css" rel="stylesheet">
+        <script>
+            //<!--
+            window.addEventListener("load", event => {
+                try {
+                    let xhr = new XMLHttpRequest();
+                    xhr.open("GET", "{url}", true);
+                    xhr.onreadystatechange = function () {
+                        if(xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200 ) {
+                            console.log("DONE", xhr);
+                            document.getElementById("value").value = xhr.responseText;
+                        }
+                    };
+                    xhr.send();
+                } catch(error) {
+                    console.warn(error);
+                }
+            });
+            //-->
+        </script>
     </head>
     <body class='edit-page'>
         <form method='post' enctype='application/x-www-form-urlencoded'>
@@ -17,7 +36,7 @@
                 {master_pages}
             </select><br>
             <label for='value'>{labelValue}</label><br />
-            <textarea class="editor" id="value" name="value">{value}</textarea><br />
+            <textarea class="editor" id="value" name="value"></textarea><br />
             <button class="save-button"></button><br />
         </form>
     </body>

@@ -124,3 +124,8 @@ button.save-button {
     background-image: url(/_save.svg);
     background-repeat: no-repeat;
 }
+
+.hidden {
+    display: none;
+    visibility: hidden;
+}

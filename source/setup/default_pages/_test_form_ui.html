@@ -4,8 +4,7 @@
     <button id="submitButton">save</button>
     <script>
         let emailFormField = document.getElementById("email");
-        document.getElementById("submitButton").addEventListener("click", e =>{
-            console.info("start");
+        document.getElementById("submitButton").addEventListener("click", event =>{
             let xhr = new XMLHttpRequest();
             xhr.open("POST", "/test-form", true);
             xhr.setRequestHeader("Content-Type", "application/json");
