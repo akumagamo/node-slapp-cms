@@ -3,12 +3,10 @@ import * as fs from 'fs';
 
 import { CMSResource } from '../libs/cms/resource';
 
-let client = new pg.Client(process.env.DATABASE_URL);
 
-const CREATE_TABLE_FILE = "setup-create-CREATE_TABLE_FILE.sql";
+const CREATE_TABLE_FILE = "./setup/sql/setup-create-table.sql";
 const EXTRA_DATA: { [key: string]: any } = {
     /*"slug" : "filename"*/
-
 
     "_login": { file: "_login.html", mime: "text/html" },
     "_edit": { file: "_edit.html", mime: "text/html" },
@@ -52,37 +50,52 @@ const EXTRA_DATA: { [key: string]: any } = {
 
 };
 
-class SetupCMSDatabase {
-    constructor() {
-        client.connect(function connectToDatabase(err: Error) {
-            if (err) {
-                console.warn("Error onConnecting", err)
-            }
-        });
-    }
+export class SetupCMSDatabase {
+    private dbClient: any;
+    constructor(private useDatabase:boolean, private fileDatabaseFolder?:string) { }
 
-    private executeSQLCommand(sqlcommand: string, parameters: any[], callback: any): void {
+    public start(): Promise<any> {
         let that = this;
-        client.query(sqlcommand, parameters, function databaseQuery(err: Error, result: pg.QueryResult) {
-            if (err) {
-                console.warn("Error executing SQL", err);
-            }
-            callback(err);
-        });
+        let promise: Promise<any>;
+        if(this.useDatabase){
+            promise = new Promise( (resolve: any, reject: any): void => {
+                this.dbClient = new pg.Client(process.env.DATABASE_URL);
+                this.dbClient.connect(function connectToDatabase(err: Error) {
+                    if (err) {
+                       reject("Error onConnecting", err);
+                    } else {
+                        resolve("Connection Successful");
+                    }
+                });
+            })
+            .then(that.createDatabase.bind(that))
+            .then(that.insertResources.bind(that));
+        } else {
+            promise = new Promise( (resolve: any, reject: any): void  => {
+                that.createFileDatabase(that.fileDatabaseFolder)
+                    .then(resolve);
+            });
+        }
+
+        return promise;
     }
 
-    public createDatabase(): void {
-        let sqlCommand = fs.readFileSync("./sql-commands/" + CREATE_TABLE_FILE, "utf-8");
-        this.executeSQLCommand(sqlCommand, [], (data: any) => console.info(data));
+    private executeSQLCommand(sqlcommand: string, parameters: any[]): Promise<any> {
+        let that = this;
+        return this.dbClient.query(sqlcommand, parameters);
     }
 
-    public insertResources(): void {
-        this.executeSQLCommand(this.createInsertResourcesText(), [], (data: any) => {
-            process.exit();
-        });
+    private createDatabase(): Promise<any> {
+        let that = this;
+        let sqlCommand = fs.readFileSync(CREATE_TABLE_FILE, "utf-8");
+        return this.executeSQLCommand(sqlCommand, []);
     }
 
-    public createInsertResourcesText(): string {
+    private insertResources(): Promise<any> {
+        return this.executeSQLCommand(this.createInsertResourcesText(), []);
+    }
+
+    private createInsertResourcesText(): string {
         let sqlCommand = `DELETE FROM cms_form_items;
                           DELETE FROM cms_resources;
                           ALTER SEQUENCE cms_form_items_id_seq  RESTART WITH 1;
@@ -108,11 +121,28 @@ class SetupCMSDatabase {
         return sqlCommand;
     }
 
-    public createFileDatabase(folder: string): void {
-        let objects = [];
+    private createDirectory(directory:string): void {
+        if (!fs.existsSync(directory)){
+            fs.mkdirSync(directory);
+        } else {
+            let files = fs.readdirSync(directory);
+            for (let file of files) {
+                fs.unlinkSync(directory + "/"+ file);
+            }
+        }
+    }
+
+    private createFileDatabase(folder: string): Promise<any> {
+        let that = this;
+        let objects: any = [];
         let counter: number = 0;
         let masterpageHelper:  number = 0;
         let landingpageHelper:  number = 0;
+
+        that.createDirectory(folder + "/resources");
+        that.createDirectory(folder + "/masterpages");
+        that.createDirectory(folder + "/form_items");
+
         for (let name in EXTRA_DATA) {
             let item = EXTRA_DATA[name];
             let isBinary = (item && item.isBinary);
@@ -141,27 +171,43 @@ class SetupCMSDatabase {
             counter++;
         }
 
-        this.writeFile(objects, folder);
+        return new Promise( resolve =>
+            that.writeFile(objects, folder).then(resolve)
+        );
     }
 
-    public writeFile(objects: any[], folder: string): void {
+    private writeFile(objects: any[], folder: string): Promise<any> {
         let that = this;
+        let promise: Promise<any>;
         let obj = objects.pop();
 
         if (obj !== undefined) {
-            fs.writeFile(folder + "/"+ (obj.resourceType === "masterpage"? "masterpages": "resources") + "/" + obj.slug, JSON.stringify(obj), err => {
-                console.info(objects.length, err);
-                that.writeFile(objects, folder);
+            promise = new Promise((resolve: any): void => {
+                fs.writeFile(folder + "/"+ (obj.resourceType === "masterpage"? "masterpages": "resources") + "/" + obj.slug, JSON.stringify(obj), err => {
+                    that.writeFile(objects, folder).then(resolve);
+                });
             });
         }
         else {
-            console.info("DONE");
+            promise = Promise.resolve("DONE");
         }
 
+        return promise;
     }
 }
 
-let setupDatabase = new SetupCMSDatabase();
-//setupDatabase.insertResources();
-
-setupDatabase.createFileDatabase("./file_data");
+if(process.argv.length === 3 && (process.argv[2] === "true")){
+    let setupDatabase = new SetupCMSDatabase(true);
+    setupDatabase.start().then(x => {
+        console.info("Datenbank erstellt!");
+        process.exit();
+    });
+} else if(process.argv.length === 4 && (process.argv[2] === "false")){
+    let setupDatabase = new SetupCMSDatabase(false, process.argv[3]);
+    setupDatabase.start().then(x => {
+        console.info("FileDatenbank erstellt!");
+        process.exit();
+    });
+} else {
+    console.info("Programm wurde nicht korrekt aufgerufen!");
+}
