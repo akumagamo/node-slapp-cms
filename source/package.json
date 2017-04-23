@@ -1,5 +1,5 @@
 {
-  "name": "node-slapp-cms",
+  "name": "slapp-cms",
   "version": "2.2.0",
   "description": "SlappCMS, is a Mini CMS running on Node",
   "main": "app.js",
