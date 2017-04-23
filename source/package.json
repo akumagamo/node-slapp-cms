@@ -10,7 +10,7 @@
     "preinstall" : "echo {\"scripts\":{\"start\":\"./node_modules/.bin/slapp-cms\"}} > ../../../package.json"
   },
   "bin": {
-	  "slapp-cms": "node ./app.js"
+	  "slapp-cms": "./app.js"
    },
   "keywords": [
     "cms",
