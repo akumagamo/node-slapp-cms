@@ -1,6 +1,6 @@
 # slappCMS micro Content Management System
-## Versionnumber 2.0.0 (2017-03-29) Beta
-(***Documentation last update 2017-03-29 13:00***)  
+## Versionnumber 2.1.0 (2017-04-23) Beta
+(***Documentation last update 2017-04-23 17:30***)  
 
 Lightweight Content Managment System, that is easy adaptable. Designed for Webapps and small Websites.
 
@@ -8,7 +8,9 @@ Lightweight Content Managment System, that is easy adaptable. Designed for Webap
 * multiple masterpages
 * selfdefined Slugs / paths (one level)
 * fileupload
-* content stored in database
+* content store
+  * database
+  * filesystem
 * database setup scripts
 * editable
   * content
@@ -17,7 +19,6 @@ Lightweight Content Managment System, that is easy adaptable. Designed for Webap
 
 ## Roadmap / Future Features
 * forms security
-* content stored in filesystem
 * testing
 * documentation
   * jsdoc
@@ -65,7 +66,7 @@ git@github.com:akumagamo/...
        | | +-+- support_files
        | | | +-- ...
        | | +-- demo.feature (demo feature file)
-	   | | +-_ ...
+	     | | +-_ ...
        | +- index.js 
        +-- readme.md (this document)
        +-- package.json
