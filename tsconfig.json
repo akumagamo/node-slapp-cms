@@ -6,7 +6,7 @@
         "preserveConstEnums": true,
         "sourceMap": true,
         "target": "es6",
-        "typeRoots" : ["source/node_modules/@types"],
+        "typeRoots" : ["node_modules/@types"],
         "types" : ["node", "pg", "mocha"]
     },
     "exclude": [
