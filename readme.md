@@ -1,5 +1,5 @@
 # slappCMS micro Content Management System
-## Versionnumber 2.1.0 (2017-04-23) Beta
+## Versionnumber 2.2.0 (2017-04-23) Beta
 (***Documentation last update 2017-04-23 17:30***)  
 
 Lightweight Content Managment System, that is easy adaptable. Designed for Webapps and small Websites.
@@ -20,6 +20,7 @@ Lightweight Content Managment System, that is easy adaptable. Designed for Webap
 ## Roadmap / Future Features
 * forms security
 * testing
+* Code refactoring / Cleanup
 * documentation
   * jsdoc
   * mini manual
@@ -32,15 +33,15 @@ Lightweight Content Managment System, that is easy adaptable. Designed for Webap
 ## Usage
 
 ## Setup
-* download / clone Source from github 
+* clone Source from github 
 * change into the folder and execute `npm install`.  
 * set postgreSql connectionstring Enviroment Variable `DATABASE_URL`
 
 ## SourceControl Link & Information
-git@github.com:akumagamo/...
+git@github.com:akumagamo/node-slapp-cms.git
 
 ## Documentation
-*... Enter User Manual Link here ...*
+*... Enter User Manual Link here ... WIP *
 
 ### File / Folder Structure
 

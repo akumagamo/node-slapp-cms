@@ -1,28 +1,16 @@
 {
-  "name": "node-mini-cms",
-  "version": "1.0.1",
-  "description": "Mini CMS running on Node",
+  "name": "node-slapp-cms",
+  "version": "2.2.0",
+  "description": "SlappCMS, is a Mini CMS running on Node",
   "main": "app.js",
   "scripts": {
-    "test": "set DATABASE_URL=postgres://demo:123@localhost/cms&& .\\node_modules\\.bin\\mocha .\\tests",
-    "start": "npm run _start-splash-message && set DATABASE_URL=postgres://demo:123@localhost/cms&& node app.js",
-    "deploy": "npm run _git-prepare-folder && npm run _git-commit  && npm run _git-push",
-    "predeploy": "npm run _clean-output-folder -s && npm run _setup-heroku-package -s && npm run _copy-all-files -s && npm run _remove-ts-files -s && npm run _remove-map-files -s ",
-    "_start-splash-message": "echo ****Starting Application with Version: %npm_package_version%****",
-    "_clean-output-folder": "rm -rf out && mkdir out",
-    "_setup-heroku-package": "node ./setup/create_package_heroku.js",
-    "_copy-all-files": "cp -R libs out/libs && cp app.js out/app.js && cp -R setup out/setup",
-    "_remove-ts-files": "find ./out -name '*.ts' -type f -delete",
-    "_remove-map-files": "find ./out -name '*.map' -type f -delete",
-    "_git-prepare-folder": "git init out && git --git-dir=.git --work-tree=. -C ./out remote add heroku https://git.heroku.com/slapp-cms.git",
-    "_git-commit": "git --git-dir=.git --work-tree=. -C ./out add --a && git --git-dir=.git --work-tree=. -C ./out commit -m \"Deployment ver: %npm_package_version%\"",
-    "_git-push": "git --git-dir=.git --work-tree=. -C ./out push -f heroku master --tags",
-    "create-db:psql" : "set DATABASE_URL=postgres://demo:123@localhost/cms&& node ./setup/setupcmsdatabase.js true",
+    "start": "node app.js",
+    "create-db:psql" : "node ./setup/setupcmsdatabase.js true",
     "create-db:file" : "node ./setup/setupcmsdatabase.js false ./file_data",
     "preinstall" : "echo {\"scripts\":{\"start\":\"./node_modules/.bin/slapp-cms\"}} > ../../package.json"
   },
   "bin": {
-	  "slapp-cms": "./bin/app.js"
+	  "slapp-cms": "./app.js"
    },
   "keywords": [
     "cms",
