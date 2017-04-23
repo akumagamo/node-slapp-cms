@@ -1,6 +1,5 @@
 node_modules/
 file_data/
-layout_test/
 out/
 public/
 **/*.map
