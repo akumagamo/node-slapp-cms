@@ -7,7 +7,7 @@
     "start": "node app.js",
     "create-db:psql" : "node ./setup/setupcmsdatabase.js true",
     "create-db:file" : "node ./setup/setupcmsdatabase.js false ./file_data",
-    "preinstall" : "echo {\"scripts\":{\"start\":\"./node_modules/.bin/slapp-cms\"}} > ../../package.json"
+    "preinstall" : "echo {\"scripts\":{\"start\":\"./node_modules/.bin/slapp-cms\"}} > ../../../package.json"
   },
   "bin": {
 	  "slapp-cms": "./app.js"
