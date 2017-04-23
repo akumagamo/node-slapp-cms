@@ -1,2 +1,4 @@
 node_modules/
-source/file_data
+source/file_data/
+source/output/
+source/public/
