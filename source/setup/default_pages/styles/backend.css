@@ -11,6 +11,7 @@ html{
 
 .edit-page form {
     height:100%;
+    overflow: hidden;
 }
 
 .edit-page .editor {
@@ -27,6 +28,23 @@ html{
     padding: 0.4em 0;
 }
 
+.edit-page .edit-detail {
+    width: 50%;
+}
+
+.edit-page .edit-detail select {
+    width: 90%;
+    height: 2.2em;
+    font-size: 1em;
+    font-weight: bold;
+    border-radius: 5px;
+    padding: 0 10px;
+}
+
+.edit-page .edit-detail label {
+    width: 90%;
+}
+
 .login-page .logo {
     padding: 1em 0;
     width: 250px;
@@ -38,26 +56,86 @@ html{
     padding: 3em 1em 2em 1em;
     margin: auto;
     margin-top:0;
+    color: #606060;
 }
 
 .login-page .login-box input , .login-page .login-box button {
-    width: 18em;
     height: 2.2em;
     font-size: 1em;
     margin-bottom: .75em;
-    border: 1px solid grey;
     border-radius: 5px;
 }
 
 .login-page .login-box input {
-    padding-left:1em;
+    width: 12em;
+    border-radius: 0 5px 5px 0;
+    padding-left: 1em;
+    border: 1px solid #606060;
 }
 
+.login-page .form-input label { 
+    display: block;
+    float: left;
+    width: 4.8em;
+    border: 1px solid #606060;
+    border-radius: 5px 0 0 5px;
+    border-right: none;
+    padding: 10px 0 8px 0;
+    background-color: #EFEFEF;
+    font-weight: bold;
+ }
+
 .login-page .login-box button {
-    height:3em;
+    height: 3em;
     font-weight: bolder;
-    width:19em;
+    width: 18em;
 }
+
+.upload-page .form-input {
+    padding: 1.5em 0  0 1.5em;
+}
+
+.upload-page .form-input label {
+    display: block;
+    float: left;
+    width: 4.8em;
+    border: 1px solid #606060;
+    border-radius: 5px 0 0 5px;
+    border-right: none;
+    padding: 10px 0 8px 10px;
+    background-color: #EFEFEF;
+    font-weight: bold;
+}
+
+.upload-page .form-input input {
+    width: 12em;
+    height: 2.2em;
+    font-size: 1em;
+    margin-bottom: .75em;
+    border-radius: 5px;
+    border-radius: 0 5px 5px 0;
+    padding-left: 1em;
+    border: 1px solid #606060;
+}
+
+.upload-page #upload {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+	overflow: hidden;
+	position: absolute;
+	z-index: -1;
+}
+
+.upload-page #uploadLabel {
+    display: block;
+    border: 4px dashed #606060; 
+    border-radius: 30px;
+    margin: 0 1em;
+    padding: 50% 0;
+    text-align: center;
+    font-size: 1.5em;
+}   
 
 .backend-buttons {
     transition: height .5s;
@@ -128,4 +206,16 @@ button.save-button {
 .hidden {
     display: none;
     visibility: hidden;
+}
+
+.right {
+    float: right;
+}
+
+.left {
+    float: left;
+}
+
+.clear {
+    clear: both;
 }

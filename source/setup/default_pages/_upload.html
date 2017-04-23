@@ -2,15 +2,16 @@
 <html>
     <head>
         <title>Upload Page</title>	
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link href="/_backend.css" rel="stylesheet">
+        <meta charset='utf-8'>
+        <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+        <link href='/_backend.css' rel='stylesheet'>
     </head>
-    <body>
+    <body class='upload-page'>
         <form method='post' enctype='multipart/form-data'>
-            <input type="text" name='value' /><br />
-            <input type="file" name='upload' /><br />
-            <button>Save</button><br />
+            <div class="form-input"><label for='value'>{slug}</label><input type='text' id='value' name='value'/></div><br />
+            <label for='upload' id='uploadLabel'>{labelFileUpload}</label>
+            <input type='file' name='upload' id='upload' /><br />
+            <button class='save-button'></button><br />
         </form>
     </body>
 </html>

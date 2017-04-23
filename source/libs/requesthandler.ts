@@ -317,7 +317,9 @@ export class RequestHandler {
                     });
                     return;
                 } else {
-                    output = this.systemPages[SystemPages.UPLOAD].value;
+                    output = this.systemPages[SystemPages.UPLOAD].value .replace(/{title}/gi, resource.slug)
+                        .replace(/{slug}/gi, "Slug")
+                        .replace(/{labelFileUpload}/gi, "choose a file ...");
                 }
             } else if(resource.resourceType === ResourceTypes.FORM) {
                 let OkResponse = {status:"ok"} ;

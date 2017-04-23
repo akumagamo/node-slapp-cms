@@ -7,34 +7,70 @@
         <link href="/_backend.css" rel="stylesheet">
         <script>
             //<!--
+
+            let originalValues = {}; 
+            let elements = { };
+                
             window.addEventListener("load", event => {
                 try {
+
+                    elements.value = document.getElementById("value");
+                    elements.resourceType = document.getElementById("resourceType");
+                    elements.parentResource = document.getElementById("parentResourceId");
+
                     let xhr = new XMLHttpRequest();
                     xhr.open("GET", "{url}", true);
                     xhr.onreadystatechange = function () {
                         if(xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200 ) {
-                            console.log("DONE", xhr);
                             document.getElementById("value").value = xhr.responseText;
+                            originalValues.resourceType = elements.resourceType.value;
+                            originalValues.parentResourceId = elements.parentResource.value;
+                            originalValues.value = elements.value.value;
                         }
                     };
                     xhr.send();
+
+                   watchElements("resourceType");
+                   watchElements("parentResourceId");
+                   watchElements("value");
+                    
                 } catch(error) {
                     console.warn(error);
                 }
             });
+
+            window.addEventListener("beforeunload", event => {
+                if(originalValues.value != elements.value.value ||
+                   originalValues.resourceType != elements.resourceType.value ||
+                   originalValues.parentResourceId != elements.parentResource.value) {
+                       event.returnValue = "Changes you made may not be saved.";
+                    return "Changes you made may not be saved.";
+                }                    
+            });
+
+            function watchElements(elementid){
+                 document.getElementById(elementid).addEventListener("change", event => {
+                    formChanged = true;
+                 });
+            }
+
             //-->
         </script>
     </head>
     <body class='edit-page'>
         <form method='post' enctype='application/x-www-form-urlencoded'>
-            <label for='resourceType'>{labelResourceType}</label><br />
-            <select name='resourceType' >
-                <option {resourceType_page} value='page'>Page</option>
-                <option {resourceType_form} value='form'>Form</option>
-                <option {resourceType_masterpage} value='masterpage'>Masterpage</option>
-            </select>&nbsp;&nbsp;&nbsp;&nbsp;<select name='parentResourceId'>
-                {master_pages}
-            </select><br>
+            <div class='edit-detail left'>
+                <label for='resourceType'>{labelResourceType}</label><br />
+                <select name='resourceType' id='resourceType' >
+                    {resource_types}
+                </select><br />
+            </div>
+            <div class='edit-detail right'>
+                <label class='right' for='value'>{labelMasterPage}</label><br />
+                <select class='right' name='parentResourceId' id='parentResourceId'>
+                    {master_pages}
+                </select><br />
+            </div>
             <label for='value'>{labelValue}</label><br />
             <textarea class="editor" id="value" name="value"></textarea><br />
             <button class="save-button"></button><br />
