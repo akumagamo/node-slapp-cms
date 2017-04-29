@@ -1,5 +1,7 @@
+.vscode/
+logs/
 node_modules/
+out/
 source/file_data/
-source/out/
-source/public/
 source/layout_test/
+source/public/

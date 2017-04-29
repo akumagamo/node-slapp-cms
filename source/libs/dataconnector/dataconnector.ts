@@ -16,5 +16,7 @@ export interface IDataConnector {
     createFormItem(item: ICMSFormItem): Promise<ICMSFormItem>;
     updateFormItem(item: ICMSFormItem): Promise<ICMSFormItem>;
     deleteFormItemWithId(id: number): Promise<boolean>;
+
+    setupDatabase(): Promise<any>;
    
 }

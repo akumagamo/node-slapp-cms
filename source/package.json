@@ -4,9 +4,9 @@
   "description": "SlappCMS, is a Mini CMS running on Node",
   "main": "app.js",
   "scripts": {
-    "start": "node app.js",
-    "create-db:psql" : "node ./setup/setupcmsdatabase.js true",
-    "create-db:file" : "node ./setup/setupcmsdatabase.js false ./file_data",
+    "start": "node ./bin/app.js run file ./file_data",
+    "create-db:psql" : "node ./bin/app.js setup database",
+    "create-db:file" : "node ./bin/app.js setup file ./file_data",
     "preinstall" : "echo {\"scripts\":{\"start\":\"./node_modules/.bin/slapp-cms\"}} > ../../../package.json"
   },
   "bin": {
@@ -23,9 +23,5 @@
   "dependencies": {
     "pg": "^6.1.1"
   },
-  "devDependencies": {},
-  "at_slapps": {
-    "connection": "file",
-    "folder": "file_data"
-  }
+  "devDependencies": { }
 }

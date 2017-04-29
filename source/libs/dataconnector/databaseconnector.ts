@@ -1,17 +1,12 @@
 import * as pg from 'pg';
+import * as fs from 'fs';
+
 import { IDataConnector, 
          DataResourceCallback, 
          DataFormItemCallback } from './dataconnector';
 import { ICMSResource } from '../cms/resource';
 import { ICMSFormItem } from '../cms/formitem';
 
-let client = new pg.Client(process.env.DATABASE_URL); 
-
-client.connect( function connectToDatabase (err : Error) {
-    if (err) {
-        console.info("Error onConnecting", err)
-    }
-});
 
 const INSERT_RESOURCE_SQL_COMMAND : string = `INSERT INTO cms_resources 
         (slug, mime_type, value, resource_type, parent_resource_id,
@@ -44,8 +39,50 @@ const SELECT_ALL_FORM_ITEM_SQL_COMMAND: string = `SELECT id, data_type, value, c
 
 const LOGICAL_DELETE_FORM_ITEM_SQL_COMMAND : string = `UPDATE cms_form_items SET delete_datetime = current_timestamp WHERE id = $1;`;
 
+const CREATE_TABLES_SQL_COMMAND = `
+    DROP TABLE IF EXISTS cms_resources;
+    DROP TABLE IF EXISTS cms_form_items;
+    create table cms_resources(
+        id serial primary key,
+        slug text not null,
+        mime_type text default 'text/html',
+        value text,
+        resource_type text, /* page, master, binary, system */
+        parent_resource_id integer default null,
+        publish_from timestamp DEFAULT now(),
+        publish_to timestamp DEFAULT null,
+        create_datetime timestamp DEFAULT now(),
+        modify_datetime timestamp DEFAULT null,
+        delete_datetime timestamp DEFAULT null
+    );
+
+    create table cms_form_items (
+        id serial primary key,
+        data_type text not null,
+        value text default '{}',
+        create_datetime timestamp DEFAULT now(),
+        modify_datetime timestamp DEFAULT null,
+        delete_datetime timestamp DEFAULT null
+    );`;
+
+
+const UPDATE_RESOURCES_PARENT_ID = `UPDATE cms_resources AS u SET parent_resource_id = x.id
+                       FROM cms_resources AS x WHERE u.resource_type='page' AND x.slug='landingpage';`
+
+
+const RESOURCES_DATA = require('../../setup/resources.json');
 
 export class DatabaseConnector implements IDataConnector {
+    private client: pg.Client;
+    constructor(connectionstring: string) {     
+        this.client = new pg.Client(connectionstring); 
+
+        this.client.connect((err: Error): void => {
+            if (err) {
+                console.info("Error onConnecting", err)
+            }
+        });
+    }
 
     public createFormItem(formitem: ICMSFormItem): Promise<ICMSFormItem> {
         return this.executeSQLCommand(INSERT_FORM_ITEM_SQL_COMMAND, 
@@ -102,8 +139,33 @@ export class DatabaseConnector implements IDataConnector {
                 .then((sql:any) => resource);
     }
 
-    private executeSQLCommand( sqlcommand: string, parameters: any[]): Promise<pg.QueryResult>{
-        return client.query(sqlcommand, parameters); 
+    public executeSQLCommand( sqlcommand: string, parameters: any[]): Promise<pg.QueryResult>{
+        return this.client.query(sqlcommand, parameters); 
+    }
+
+    public setupDatabase(): Promise<any> {
+        return this.executeSQLCommand(CREATE_TABLES_SQL_COMMAND, [])
+            .then(this.insertResources.bind(this))
+        ;
+    }
+
+    public insertResources(): Promise<any> {
+        let sqlCommand = "";
+        for (let name in RESOURCES_DATA) {
+            let item = RESOURCES_DATA[name];
+            let isBinary = (item && item.isBinary);
+            let content: any = fs.readFileSync("./setup/default_pages/" + item.file, isBinary ? "binary" : "utf-8") || "";
+            let resourceType: string = isBinary ? "binary" : ((item && item.resourceType) || "systempage");
+
+            content = isBinary ? new Buffer(content, "binary").toString('base64') : content.replace(/'/gi, "''");
+
+            sqlCommand += `insert into cms_resources(slug, mime_type, value, resource_type, parent_resource_id) 
+                           values ('${name}', '${item.mime}', '${content}', '${resourceType}', null);\r\n`;
+        }
+
+        sqlCommand += UPDATE_RESOURCES_PARENT_ID;
+
+        return this.executeSQLCommand(sqlCommand, []);
     }
 
     private dbResultToObjectList(result : pg.QueryResult): Promise<ICMSResource[]|ICMSFormItem[]> {

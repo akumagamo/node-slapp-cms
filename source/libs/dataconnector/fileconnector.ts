@@ -1,13 +1,16 @@
+import * as fs from 'fs';
+
 import { IDataConnector, 
          DataResourceCallback, 
          DataFormItemCallback } from './dataconnector';
 
-import { ICMSResource } from '../cms/resource';
+import { ICMSResource, CMSResource } from '../cms/resource';
 import { ICMSFormItem } from '../cms/formitem';
 
 import { CMSBase } from '../cms/base';
 
-import * as fs from 'fs';
+
+const RESOURCES_DATA = require('../../setup/resources.json');
 
 let ResourceTypes = CMSBase.ResourceTypes;
 
@@ -159,4 +162,86 @@ export class FileConnector implements IDataConnector {
             );
         });
     }
+
+    public setupDatabase(): Promise<any> {
+        this.createDirectory(this.dataFolder);
+        this.createFileDatabase(this.dataFolder);
+        return null;
+    }
+
+
+    private createDirectory(directory:string): void {
+        if (!fs.existsSync(directory)){
+            fs.mkdirSync(directory);
+        } else {
+            let files = fs.readdirSync(directory);
+            for (let file of files) {
+                fs.unlinkSync(directory + "/"+ file);
+            }
+        }
+    }
+
+    private createFileDatabase(folder: string): Promise<any> {
+        let that = this;
+        let objects: any = [];
+        let counter: number = 0;
+        let masterpageHelper:  number = 0;
+        let landingpageHelper:  number = 0;
+
+        that.createDirectory(folder + "/resources");
+        that.createDirectory(folder + "/masterpages");
+        that.createDirectory(folder + "/form_items");
+
+        for (let name in RESOURCES_DATA) {
+            let item = RESOURCES_DATA[name];
+            let isBinary = (item && item.isBinary);
+
+            let content: any = fs.readFileSync("./setup/default_pages/" + item.file, isBinary ? "binary" : "utf-8") || "";
+
+            let resourceType: string = isBinary ? "binary" : ((item && item.resourceType) || "systempage");
+
+            content = isBinary ? new Buffer(content, "binary").toString('base64') : content;
+
+            if(name==="landingpage"){
+                landingpageHelper = counter;
+            }
+
+            if(name==="masterpage"){
+                masterpageHelper = counter;
+            }
+
+            let obj = new CMSResource((name===""?"_root":name), content);
+            obj.id = counter;
+            obj.resourceType = resourceType;
+            obj.mimeType = item.mime;
+            obj.parentResourceId = resourceType==="page"?(name===""?landingpageHelper: masterpageHelper):-1;
+
+            objects.push(obj);
+            counter++;
+        }
+
+        return new Promise( resolve =>
+            that.writeFile(objects, folder).then(resolve)
+        );
+    }
+
+    private writeFile(objects: any[], folder: string): Promise<any> {
+        let that = this;
+        let promise: Promise<any>;
+        let obj = objects.pop();
+
+        if (obj !== undefined) {
+            promise = new Promise((resolve: any): void => {
+                fs.writeFile(folder + "/"+ (obj.resourceType === "masterpage"? "masterpages": "resources") + "/" + obj.slug, JSON.stringify(obj), err => {
+                    that.writeFile(objects, folder).then(resolve);
+                });
+            });
+        }
+        else {
+            promise = Promise.resolve("DONE");
+        }
+
+        return promise;
+    }
+    
 }

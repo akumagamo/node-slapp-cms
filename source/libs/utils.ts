@@ -5,20 +5,20 @@ export namespace Utils {
         return Math.random().toString(26).replace(/\d|\./gi, "");
     }
 
-    export function getBackendStaticFiles(filename:string) : string{
+    export function getBackendStaticFiles(filename: string): string {
         return fs.readFileSync(__dirname + "/../backend/" + filename, "utf8"); 
     }
 
-    export function trim(text : string, char? : string) : string {
+    export function trim(text: string, char?: string): string {
         char = char || "\\s";
         return text.replace(new RegExp("^" + char + "*", "i"), "").replace(new RegExp(char + "*$", "i"), "");
     }
 
-    export function assign(...objects:Object[]):any{
+    export function assign(...objects: Object[]): any {
         return (<any>Object).assign.apply(null,objects);
     }
 
-    function findIndex(binary:any, needle:string, startIndex:number) : number{
+    function findIndex(binary: any, needle: string, startIndex: number): number {
         let index = -1;
         let found : boolean = false;
         let counter : number = startIndex;
@@ -41,7 +41,7 @@ export namespace Utils {
         return index;
     }
 
-    function processDataChunk(binary:any) : any {
+    function processDataChunk(binary: any): any {
         let seperator = "\r\n\r\n";
         let firstPosition = findIndex(binary, seperator, 0) + Buffer.byteLength(seperator);
         let headerContent = binary.slice(0, firstPosition).toString("utf-8");
@@ -59,7 +59,7 @@ export namespace Utils {
         };
     }
 
-    export function processDataChunks(binary:any, boundary:string) : any{
+    export function processDataChunks(binary: any, boundary: string) : any {
         let done : boolean = false;
         let firstIndex : number = 0;
         let lastIndex : number = 0;
@@ -78,7 +78,7 @@ export namespace Utils {
         return result;
     }
 
-    function parseHeader(contentPart: string){
+    function parseHeader(contentPart: string): any {
         let result : any = {};
         let headerParts = contentPart.split("\r\n");
         
@@ -98,7 +98,7 @@ export namespace Utils {
         return result;
     }
 
-    function parseHeaderPart(headerParts : string) : any {
+    function parseHeaderPart(headerParts: string): any {
         console.info(headerParts);
         return headerParts.split(";").reduce(
             (last : any, next : any) => {
