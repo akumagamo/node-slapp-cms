@@ -8,7 +8,7 @@ import { CMSResources } from '../libs/cms/resources';
 import { CMSFormItems } from '../libs/cms/formitems';
 import { RequestHandler } from '../libs/requesthandler';
 
-const CREATE_TABLE_FILE = "./setup/sql/setup-create-table.sql";
+const DEPLOY_FOLDER = "../out";
 
 let packageJson = require('../package.json');
 
@@ -23,12 +23,18 @@ class App {
                 throw Error ("Invalid Invocation");
             }
 
+            console.info("Command Arguments:", command, type, folder);
+
             if(command === "run") {
+                console.info("Starting Webserver ");
                 this.startWebserver(type, folder);
             } else if(command === "setup") {
+                console.info("Starting Setup ");
                 if(type === "file") {
+                    console.info("\tFILE ");
                     this.connector = new FileConnector(folder);
                 } else if(type === "database") {
+                    console.info("\tDATABASE ");
                     this.connector = new DatabaseConnector(process.env.DATABASE_URL);
                 } else {
                     throw Error ("Invalid Type");
@@ -104,11 +110,11 @@ class App {
     }
 
     public deploy(): void {
+        let ou
+        this.deleteDirectory(DEPLOY_FOLDER, false);
+        this.copyFiles(".", DEPLOY_FOLDER);
 
-        this.deleteDirectory("../out", false);
-        this.copyFiles(".", "../out");
-
-        let deploy_file = "../out/package.json";
+        let deploy_file = DEPLOY_FOLDER + "/package.json";
         
         let newPackage: any = {
             "scripts" : {"start": "node bin/app.js run database"}
@@ -137,8 +143,6 @@ class App {
     public startWebserver(mode: string, folder: string): void {
         let webserverPort = process.env.PORT || 80;
         
-        console.info("Starting Webserver ...");
-
         this.connector = 
             mode === "file" ? 
             new FileConnector(folder) : 
