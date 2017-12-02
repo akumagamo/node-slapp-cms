@@ -37,5 +37,6 @@
     "article_3.jpg": { "file": "images/masterpage/article_3.jpg", "mime": "image/jpeg", "isBinary": true },
     "": { "file": "root.html", "mime": "text/html", "resourceType": "page" },
     "test-form": { "file": "_test_form", "mime": "application/json", "resourceType": "form"  },
+    "message_form": { "file": "_message_form", "mime": "application/json", "resourceType": "form"},
     "test-form-ui": { "file": "_test_form_ui.html", "mime": "text/html", "resourceType": "page"  }
 }

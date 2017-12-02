@@ -1,0 +1,14 @@
+{
+    "allow": {
+        "query": true,
+        "insert": true
+    },
+    "dataType": "messages",
+    "fields": [
+        {
+            "name": "message",
+            "type": "string",
+            "validation": ".+"
+        }
+    ]
+}
