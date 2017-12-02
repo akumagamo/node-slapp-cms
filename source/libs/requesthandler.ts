@@ -265,16 +265,16 @@ export class RequestHandler {
                         .replace(/{labelValue}/gi, "Content")
                         .replace(/{labelResourceType}/gi, "Resource Type")
                         .replace(/{resourceTypes}/gi, 
-                        (m: any, p: any) => {
-                            let options = "";
-                            for(let type in ResourceTypes){
-                                let reseourceType = ResourceTypes[type];
-                                options += `<option value='${reseourceType}' ${(resource.resourceType === reseourceType)?"selected":""}>${reseourceType}</option>`;
-                            }
-                            return options;
+                            (m: any, p: any) => {
+                                let options = "";
+                                for(let type in ResourceTypes){
+                                    let reseourceType = ResourceTypes[type];
+                                    options += `<option value='${reseourceType}' ${(resource.resourceType === reseourceType)?"selected":""}>${reseourceType}</option>`;
+                                }
+                                return options;
                         })
                         .replace(/{masterPages}/gi,
-                        (m: any, p: any) => {
+                            (m: any, p: any) => {
                             let options = "<option value='-1'>none</option>";
                             for(let idx in this.MasterPages){
                                 let masterpage = this.MasterPages[idx];

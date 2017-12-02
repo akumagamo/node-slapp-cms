@@ -26,13 +26,13 @@
                             originalValues.resourceType = elements.resourceType.value;
                             originalValues.parentResourceId = elements.parentResource.value;
                             originalValues.value = elements.value.value;
+                            
+                            watchElements("resourceType");
+                            watchElements("parentResourceId");
+                            watchElements("value");
                         }
                     };
                     xhr.send();
-
-                   watchElements("resourceType");
-                   watchElements("parentResourceId");
-                   watchElements("value");
                     
                 } catch(error) {
                     console.warn(error);
