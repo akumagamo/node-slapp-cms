@@ -28,7 +28,7 @@ Lightweight Content Managment System, that is easy adaptable. Designed for Webap
 * SEO optimization
 
 ## Known Bugs
-* none
+* textarea error in edit page
 
 ## Usage
 
@@ -75,3 +75,9 @@ git@github.com:akumagamo/node-slapp-cms.git
 
 ### External Libs
 * **pg npm module** for the database connection with postgreSql.
+
+
+
+/* export PATH=$PATH:/g/00_programs/phantomjs-2.1.1/bin */
+
+http://seleniumhq.github.io/selenium/docs/api/javascript/module/selenium-webdriver/

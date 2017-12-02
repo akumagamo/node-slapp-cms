@@ -8,10 +8,16 @@
     "create-db:psql": "node ./bin/app.js setup database",
     "create-db:file": "node ./bin/app.js setup file ./file_data",
     "deploy": "node ./bin/app.js deploy",
+    "test": "",
     "preinstall": "echo {\"scripts\":{\"start\":\"./node_modules/.bin/slapp-cms\"}} > ../../../package.json"
   },
   "bin": {
     "slapp-cms": "./app.js"
+  },
+  "config":{
+    "test": {
+      "phantomjsPath": "G:\\00_programs\\phantomjs-2.1.1\\bin\\phantomjs.exe"
+    }
   },
   "keywords": [
     "cms",
