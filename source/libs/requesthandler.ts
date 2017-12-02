@@ -258,14 +258,22 @@ export class RequestHandler {
                     });
                     return;
                 } else {
+                    console.info("----HIER---");
                     resource.mimeType = MimeType.HTML;
                     output = this.systemPages[SystemPages.EDIT].value
                         .replace(/{title}/gi, resource.slug)
                         .replace(/{labelValue}/gi, "Content")
                         .replace(/{labelResourceType}/gi, "Resource Type")
-                        .replace(/{resourceType_([^}]*)}/gi,
-                        (m: any, p: any) => p === resource.resourceType ? "selected" : "")
-                        .replace(/{master_pages}/gi,
+                        .replace(/{resourceTypes}/gi, 
+                        (m: any, p: any) => {
+                            let options = "";
+                            for(let type in ResourceTypes){
+                                let reseourceType = ResourceTypes[type];
+                                options += `<option value='${reseourceType}' ${(resource.resourceType === reseourceType)?"selected":""}>${reseourceType}</option>`;
+                            }
+                            return options;
+                        })
+                        .replace(/{masterPages}/gi,
                         (m: any, p: any) => {
                             let options = "<option value='-1'>none</option>";
                             for(let idx in this.MasterPages){

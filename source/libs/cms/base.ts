@@ -1,11 +1,11 @@
 export namespace CMSBase {
-    export  const ResourceTypes = {
+    export  const ResourceTypes : {[key:string]:string} = {
         "SYSTEM_PAGE" : "systempage",
         "PAGE" : "page",
         "MASTER_PAGE" : "masterpage",
         "BINARY" : "binary",
         "UPLOAD" : "upload",
-        "FORM" : "form" 
+        "FORM" : "form",
     };
 
     export const MimeTypes: any = {

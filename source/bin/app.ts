@@ -110,7 +110,6 @@ class App {
     }
 
     public deploy(): void {
-        let ou
         this.deleteDirectory(DEPLOY_FOLDER, false);
         this.copyFiles(".", DEPLOY_FOLDER);
 
