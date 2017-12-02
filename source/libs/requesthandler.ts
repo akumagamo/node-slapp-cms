@@ -243,7 +243,8 @@ export class RequestHandler {
         if(resource.mimeType === MimeType.HTML 
             || resource.mimeType === MimeType.JSON
             || resource.mimeType === MimeType.CSS
-            || resource.mimeType === MimeType.JAVASCRIPT) {
+            || resource.mimeType === MimeType.JAVASCRIPT
+        ) {
             if(validsession && requestedUrl.path.indexOf("?edit") > -1) {
                 if(requestMethod === "POST") {
                     this.getPostData(request).then((postdata: any) => {
@@ -258,7 +259,6 @@ export class RequestHandler {
                     });
                     return;
                 } else {
-                    console.info("----HIER---");
                     resource.mimeType = MimeType.HTML;
                     output = this.systemPages[SystemPages.EDIT].value
                         .replace(/{title}/gi, resource.slug)
